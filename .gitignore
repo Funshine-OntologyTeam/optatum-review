@@ -1,0 +1,6 @@
+node_modules/
+ftp.config.json
+review_stats.log
+public/
+review_stats.js
+review_stats.json

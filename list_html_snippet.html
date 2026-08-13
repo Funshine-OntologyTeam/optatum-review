@@ -1,0 +1,73 @@
+<!--
+  상품목록 리뷰 표시
+  list.html 맨 아래에 붙여넣으세요. (기존 블록은 삭제)
+  검색결과 화면(search.html)에도 똑같이 붙이면 그쪽도 동작합니다.
+
+  ★ 아래 STATS_URL 을 GitHub Pages 주소로 바꾸세요 ★
+
+  동작
+   1) 리뷰 "개수" 는 알파리뷰 API에서 실시간 조회 (요청 1번). 항상 최신입니다.
+   2) "평점" 은 GitHub Actions 가 매일 만들어 올리는 파일에서 읽습니다.
+   3) 평점 파일을 못 읽어도 개수는 그대로 나옵니다. 어느 쪽이 죽어도 화면은 안 깨집니다.
+
+  사람이 정기적으로 할 일은 없습니다.
+-->
+<script>
+(function(){
+    // ↓ Settings → Pages 에서 확인한 주소로 교체
+    var STATS_URL = 'https://<계정>.github.io/<리포이름>/review_stats.js';
+
+    var API = 'https://review-widget.alphwidget.com/v2/api-widget/module/review/count'
+            + '?mall_id=optatumkorea&shop_no=1&product_no=';
+
+    var MIN = 1;   // 이 개수 미만이면 표시하지 않음
+
+    var els = [].slice.call(document.querySelectorAll('.ga09list .prdreview'));
+    if(!els.length) return;
+
+    var nos = els.map(function(el){ return el.getAttribute('data-no'); }).filter(Boolean);
+    if(!nos.length) return;
+
+    function paint(el, n, avg){
+        if(!n || n < MIN){ el.className = 'prdreview empty'; return; }
+        el.className = 'prdreview';
+        var html = '';
+        if(avg){
+            var full = Math.round(avg);
+            html += '<span class="star">' + new Array(full+1).join('★') + new Array(6-full).join('☆') + '</span>'
+                  + '<span class="rating">' + avg.toFixed(1) + '</span>';
+        }
+        html += '<span class="rcount">리뷰 ' + n.toLocaleString() + '</span>';
+        el.innerHTML = html;
+    }
+
+    function render(){
+        var map = window.REVIEW_STATS || {};
+        fetch(API + nos.join(','))
+        .then(function(r){ return r.ok ? r.json() : null; })
+        .then(function(json){
+            var results = (json && json.results) || {};
+            els.forEach(function(el){
+                var no = el.getAttribute('data-no');
+                var n = results[no];
+                var cached = map[no];
+                if(typeof n !== 'number') n = cached ? cached[0] : 0;   // API 실패 시 파일값
+                paint(el, n, cached ? cached[1] : 0);
+            });
+        })
+        .catch(function(){
+            els.forEach(function(el){
+                var cached = map[el.getAttribute('data-no')];
+                if(cached) paint(el, cached[0], cached[1]);
+                else el.className = 'prdreview empty';
+            });
+        });
+    }
+
+    var s = document.createElement('script');
+    s.src = STATS_URL + '?v=' + new Date().toISOString().slice(0, 10);
+    s.onload = render;
+    s.onerror = render;   // 평점 파일이 없어도 개수는 나오도록
+    document.head.appendChild(s);
+})();
+</script>

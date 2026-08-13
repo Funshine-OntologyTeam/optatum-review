@@ -1,0 +1,50 @@
+name: 리뷰 통계 갱신
+
+on:
+  schedule:
+    - cron: '0 19 * * *'   # UTC 19:00 = 한국 새벽 4시
+  workflow_dispatch:        # Actions 탭에서 수동 실행 가능
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: 리뷰 통계 생성
+        env:
+          REVIEW_STATS_OUT: ${{ github.workspace }}/public/review_stats.js
+        run: node build_review_stats.js
+
+      - name: 결과 확인
+        run: |
+          ls -l public/
+          head -c 300 public/review_stats.js
+          echo
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

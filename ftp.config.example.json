@@ -1,0 +1,14 @@
+{
+  "_주의": "이 파일을 ftp.config.json 으로 복사한 뒤 값을 채우세요. 비밀번호가 들어가므로 외부에 공유하지 마세요.",
+  "_host": "카페24 관리자 > 웹 FTP 화면에 표시된 FTP 주소. 보통 optatumkorea.cafe24.com",
+  "_user": "카페24 FTP 아이디 (보통 쇼핑몰 아이디)",
+  "_password": "카페24 FTP 비밀번호. 관리자에서 별도 설정하는 값입니다",
+  "_secure": "FTPS 사용 시 true. 접속이 안 되면 false 로 바꿔보세요",
+  "_remotePath": "업로드 경로. 바꾸지 마세요",
+
+  "host": "optatumkorea.cafe24.com",
+  "user": "",
+  "password": "",
+  "secure": false,
+  "remotePath": "/web/upload/review_stats.js"
+}
