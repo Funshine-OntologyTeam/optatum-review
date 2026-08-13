@@ -3,7 +3,8 @@
   list.html 맨 아래에 붙여넣으세요. (기존 블록은 삭제)
   검색결과 화면(search.html)에도 똑같이 붙이면 그쪽도 동작합니다.
 
-  ★ 아래 STATS_URL 을 GitHub Pages 주소로 바꾸세요 ★
+  평점 데이터: https://funshine-ontologyteam.github.io/optatum-review/review_stats.js
+  (GitHub Actions 가 매일 새벽 4시에 자동 갱신 — 사람이 할 일 없음)
 
   동작
    1) 리뷰 "개수" 는 알파리뷰 API에서 실시간 조회 (요청 1번). 항상 최신입니다.
@@ -14,8 +15,7 @@
 -->
 <script>
 (function(){
-    // ↓ Settings → Pages 에서 확인한 주소로 교체
-    var STATS_URL = 'https://<계정>.github.io/<리포이름>/review_stats.js';
+    var STATS_URL = 'https://funshine-ontologyteam.github.io/optatum-review/review_stats.js';
 
     var API = 'https://review-widget.alphwidget.com/v2/api-widget/module/review/count'
             + '?mall_id=optatumkorea&shop_no=1&product_no=';
